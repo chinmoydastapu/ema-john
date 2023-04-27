@@ -20,7 +20,7 @@ const MyOrders = () => {
     };
 
     return (
-        <div className="w-full mx-auto lg:mx-20 text-center">
+        <div className="w-full lg:w-3/5 mx-auto lg:mx-20 text-center">
             <div className="text-orange-400 text-2xl font-semibold mt-10 mb-5 text-center">
                 {
                     orderedProducts?.length > 0 ? <h2>Your Orders List <span className="text-sm">(Total {orderedProducts.length} Products)</span></h2> :

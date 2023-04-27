@@ -27,6 +27,12 @@ export const orderFromLocalStorage = () => {
     return orderedProducts;
 };
 
+export const totalOrderedItemsFromLS = () => {
+    const orderedItems = Object.values(getOrderData());
+    const totalOrderedItems = orderedItems.reduce((previous, current) => previous + current, 0);
+    return totalOrderedItems;
+};
+
 const getCartProducts = res => {
     let cartProducts = [];
     const cartProductId = Object.keys(getCartData());
