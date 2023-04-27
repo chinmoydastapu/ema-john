@@ -1,16 +1,27 @@
 /* eslint-disable react/prop-types */
 
 import { TrashIcon } from "@heroicons/react/24/solid";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { ThemeContext } from "../../App";
 
-const Order = ({ orderedProduct }) => {
+const Order = ({ orderedProduct, handleRemoveOrderedProduct }) => {
+    const [initialShow, setInitialShow] = useState(false);
+
     const [toggleTheme] = useContext(ThemeContext);
 
-    const { name, price, shipping, img } = orderedProduct;
+    const { id, name, price, shipping, img } = orderedProduct;
+
+    setTimeout(() => {
+        setInitialShow(true);
+    }, 10);
+
+    const handleTrashBtn = id => {
+        setInitialShow(false);
+        handleRemoveOrderedProduct(id);
+    };
 
     return (
-        <div className={`flex justify-between items-center m-5 my-10 p-3 rounded-lg shadow-lg hover:shadow-xl ${toggleTheme ? 'bg-slate-200' : 'bg-slate-800'}`}>
+        <div className={`flex justify-between items-center m-5 my-10 p-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-1000 ease-in-out ${toggleTheme ? 'bg-slate-200' : 'bg-slate-800'} ${initialShow ? 'opacity-100' : 'scale-50 opacity-0 -translate-x-96'}`}>
             <div className="flex justify-start items-center gap-5">
                 <div>
                     <img className="w-20 h-20 rounded-lg" src={img} alt="Loading..." />
@@ -21,7 +32,7 @@ const Order = ({ orderedProduct }) => {
                     <p>Shipping: <span className="text-orange-400">${shipping}</span></p>
                 </div>
             </div>
-            <div className="cursor-pointer">
+            <div className="cursor-pointer" onClick={() => handleTrashBtn(id)}>
                 <TrashIcon className="w-12 h-12 bg-orange-300 text-orange-600 p-2 rounded-full" />
             </div>
         </div>

@@ -17,11 +17,13 @@ const HeaderNav = () => {
     useEffect(() => {
         const totalCartData = Object.keys(getCartData());
         setTotalCarts(totalCartData);
+    }, [setTotalCarts]);
 
+    setTimeout(() => {
         // After reload, set the active item
         const path = window.location.pathname;
         setActiveItem(path);
-    }, [setTotalCarts]);
+    }, 10);
 
     const navItems = [
         { path: '/home', name: 'Home' },

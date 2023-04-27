@@ -12,7 +12,7 @@ import {
 const Product = ({ product }) => {
     const { id, name, category, img, price, seller, ratings, ratingsCount, stock } = product;
 
-    const [showAnimation, setShowAnimation] = useState(false);
+    const [initialAnimation, setinitialAnimation] = useState(false);
     const [triggerHeartIcon, setTriggerHeartIcon] = useState(false);
 
     const [toggleTheme] = useContext(ThemeContext);
@@ -48,18 +48,18 @@ const Product = ({ product }) => {
     };
 
     setTimeout(() => {
-        setShowAnimation(true);
+        setinitialAnimation(true);
     }, 10);
 
     return (
-        <div className={`card md:card-side shadow-xl ${!toggleTheme ? 'bg-slate-800' : 'bg-white'} transition-all duration-1000 ease-in-out ${showAnimation ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}>
+        <div className={`card md:card-side shadow-xl ${!toggleTheme ? 'bg-slate-800' : 'bg-white'} transition-all duration-1000 ease-in-out ${initialAnimation ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}>
             <figure><img src={img ? img : 'https://www.pulsecarshalton.co.uk/wp-content/uploads/2016/08/jk-placeholder-image.jpg'} alt="Error-Image" className='w-full md:w-80 h-full overflow-hidden transition-scale duration-500 ease-in-out hover:scale-110' /></figure>
             <div className="card-body lg:w-96">
                 <div className='card-actions justify-end'>
                     <span className={`tooltip tooltip-left ${triggerHeartIcon && 'tooltip-warning'}`}
                         data-tip={triggerHeartIcon ? 'Click to remove from favourite list' : 'Click to add on favourite list'}
                         onClick={handleHeartBtn}>
-                        <HeartIcon className={`h-6 w-6 transition-all duration-300 ease-in-out ${triggerHeartIcon && 'text-red-500 scale-110'}`} />
+                        <HeartIcon className={`h-6 w-6 transition-all duration-1000 ease-in-out ${triggerHeartIcon && 'text-red-500 scale-110'}`} />
                     </span>
                 </div>
                 <h2 className="card-title capitalize">

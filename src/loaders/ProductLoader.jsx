@@ -1,4 +1,4 @@
-import { getCartData } from "../utilities/LocalStorage";
+import { getCartData, getOrderData } from "../utilities/LocalStorage";
 
 export const productLoader = async () => {
     const products = await fetch('/products.json');
@@ -41,7 +41,7 @@ const getCartProducts = res => {
 
 const getOrderedProducts = res => {
     let orderedProducts = [];
-    const orderedProductId = Object.keys(getCartData());
+    const orderedProductId = Object.keys(getOrderData());
 
     orderedProductId.forEach(orderId => {
         const cartProduct = res.find(product => product.id == orderId);
