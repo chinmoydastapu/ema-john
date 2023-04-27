@@ -7,6 +7,7 @@ import { getCartData } from "../../utilities/LocalStorage";
 
 const HeaderNav = () => {
     const [toggleMenu, setToggleMenu] = useState(false);
+    const [activeItem, setActiveItem] = useState('/');
 
     const [toggleTheme, setToggleTheme] = useContext(ThemeContext);
     const { totalCarts, setTotalCarts } = useContext(CartContext);
@@ -16,6 +17,10 @@ const HeaderNav = () => {
     useEffect(() => {
         const totalCartData = Object.keys(getCartData());
         setTotalCarts(totalCartData);
+
+        // After reload, set the active item
+        const path = window.location.pathname;
+        setActiveItem(path);
     }, [setTotalCarts]);
 
     const navItems = [
@@ -46,7 +51,7 @@ const HeaderNav = () => {
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1">
                     {
-                        navItems.map((item, idx) => <li key={idx}><Link to={item.path} className="text-gray-300 hover:bg-transparent focus:bg-transparent active:bg-transparent">{item.name}</Link></li>)
+                        navItems.map((item, idx) => <li key={idx}><Link to={item.path} onClick={() => setActiveItem(item.path)} className={`text-gray-300 hover:bg-transparent focus:bg-transparent active:bg-transparent ${activeItem === item.path ? 'text-orange-500' : ''}`}>{item.name}</Link></li>)
                     }
                 </ul>
             </div>
