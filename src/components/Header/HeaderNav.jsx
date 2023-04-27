@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Bars2Icon, MoonIcon, ShoppingCartIcon, SunIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import { useContext, useEffect, useState } from "react";
 import Logo from '../../assets/Logo.svg';
@@ -6,10 +6,12 @@ import { CartContext, ThemeContext } from "../../App";
 import { getCartData } from "../../utilities/LocalStorage";
 
 const HeaderNav = () => {
+    const [toggleMenu, setToggleMenu] = useState(false);
+
     const [toggleTheme, setToggleTheme] = useContext(ThemeContext);
     const { totalCarts, setTotalCarts } = useContext(CartContext);
 
-    const [toggleMenu, setToggleMenu] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const totalCartData = Object.keys(getCartData());
@@ -55,10 +57,10 @@ const HeaderNav = () => {
                         !toggleTheme ? <SunIcon className="w-6 h-6 text-orange-300 cursor-pointer" /> : <MoonIcon className="w-6 h-6 text-gray-300 cursor-pointer" />
                     }
                 </div>
-                <Link to='/order-review' className="text-secondary ml-4 indicator">
+                <div className="text-secondary ml-4 indicator cursor-pointer" onClick={() => navigate('/order-review')}>
                     <ShoppingCartIcon className="h-6 w-6" />
                     <span className="indicator-item badge badge-error">{totalCarts.length}</span>
-                </Link>
+                </div>
             </div>
         </div>
     );

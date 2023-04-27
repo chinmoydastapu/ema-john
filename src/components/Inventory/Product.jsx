@@ -7,14 +7,15 @@ import { addCartToDb, getCartData, removeFromCartDb } from '../../utilities/Loca
 const Product = ({ product }) => {
     const { id, name, category, img, price, seller, ratings, ratingsCount, stock } = product;
 
+    const [triggerHeartIcon, setTriggerHeartIcon] = useState(false);
+    const [showAnimation, setShowAnimation] = useState(false);
+
     const [toggleTheme] = useContext(ThemeContext);
     const { setTotalCarts } = useContext(CartContext);
 
-    const [triggerHeartIcon, setTriggerHeartIcon] = useState(false);
-
     const handleHeartBtn = () => {
         setTriggerHeartIcon(!triggerHeartIcon);
-        if(triggerHeartIcon) {
+        if (triggerHeartIcon) {
             removeFromCartDb(id);
         } else {
             addCartToDb(id);
@@ -27,25 +28,29 @@ const Product = ({ product }) => {
         // heart icon turns red when navigated in order-review route
         const inPages = window.location.pathname.split('/');
         const inOrderReviewPage = inPages.find(inPage => inPage === 'order-review');
-        if(inOrderReviewPage === 'order-review'){
+        if (inOrderReviewPage === 'order-review') {
             setTriggerHeartIcon(true);
         }
 
         const cartIds = Object.keys(getCartData());
-        if(cartIds.find(cartId => cartId === id)) {
+        if (cartIds.find(cartId => cartId === id)) {
             setTriggerHeartIcon(true);
-        } 
+        }
     }, [id]);
 
+    setTimeout(() => {
+        setShowAnimation(true);
+    }, 10);
+
     return (
-        <div className={`card md:card-side shadow-xl ${!toggleTheme ? 'bg-slate-800' : 'bg-white border-2'}`}>
+        <div className={`card md:card-side shadow-xl ${!toggleTheme ? 'bg-slate-800' : 'bg-white'} transition-all duration-1000 ease-in-out ${showAnimation ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}>
             <figure><img src={img ? img : 'https://www.pulsecarshalton.co.uk/wp-content/uploads/2016/08/jk-placeholder-image.jpg'} alt="Error-Image" className='w-full md:w-80 h-full overflow-hidden transition-scale duration-500 ease-in-out hover:scale-110' /></figure>
             <div className="card-body lg:w-96">
                 <div className='card-actions justify-end'>
                     <span className={`tooltip tooltip-left ${triggerHeartIcon && 'tooltip-warning'}`}
                         data-tip={triggerHeartIcon ? 'Click to remove from favourite list' : 'Click to add on favourite list'}
                         onClick={handleHeartBtn}>
-                        <HeartIcon className={`h-6 w-6 transition-all duration-300 ease-in-out ${triggerHeartIcon  && 'text-red-500 scale-110'}`} />
+                        <HeartIcon className={`h-6 w-6 transition-all duration-300 ease-in-out ${triggerHeartIcon && 'text-red-500 scale-110'}`} />
                     </span>
                 </div>
                 <h2 className="card-title capitalize">
