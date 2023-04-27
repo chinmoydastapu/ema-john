@@ -1,11 +1,11 @@
 import { createContext, useEffect, useState } from "react";
 import { RouterProvider } from "react-router-dom";
-import { router } from "./routes/Routes";
 import { productLoader } from "./loaders/ProductLoader";
+import { router } from "./routes/routes";
 
 export const ThemeContext = createContext();
 export const CartContext = createContext();
-export const ProductContext = createContext();
+export const ProductsContext = createContext();
 
 const App = () => {
   const [toggleTheme, setToggleTheme] = useState(false);
@@ -20,9 +20,9 @@ const App = () => {
     <div data-theme={!toggleTheme ? 'night' : 'autumn'}>
       <ThemeContext.Provider value={[toggleTheme, setToggleTheme]}>
         <CartContext.Provider value={{ totalCarts, setTotalCarts }}>
-          <ProductContext.Provider value={{products}}>
+          <ProductsContext.Provider value={{products}}>
             <RouterProvider router={router}></RouterProvider>
-          </ProductContext.Provider>
+          </ProductsContext.Provider>
         </CartContext.Provider>
       </ThemeContext.Provider>
     </div>

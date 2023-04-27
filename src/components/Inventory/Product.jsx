@@ -2,27 +2,21 @@
 import { HeartIcon, StarIcon, UserGroupIcon } from '@heroicons/react/24/solid';
 import { useContext, useEffect, useState } from 'react';
 import { CartContext, ThemeContext } from '../../App';
-import { addCartToDb, getCartData, removeFromCartDb } from '../../utilities/LocalStorage';
+import {
+    addCartToDb,
+    getCartData,
+    removeFromCartDb,
+    addOrderToDb
+} from '../../utilities/LocalStorage';
 
 const Product = ({ product }) => {
     const { id, name, category, img, price, seller, ratings, ratingsCount, stock } = product;
 
-    const [triggerHeartIcon, setTriggerHeartIcon] = useState(false);
     const [showAnimation, setShowAnimation] = useState(false);
+    const [triggerHeartIcon, setTriggerHeartIcon] = useState(false);
 
     const [toggleTheme] = useContext(ThemeContext);
     const { setTotalCarts } = useContext(CartContext);
-
-    const handleHeartBtn = () => {
-        setTriggerHeartIcon(!triggerHeartIcon);
-        if (triggerHeartIcon) {
-            removeFromCartDb(id);
-        } else {
-            addCartToDb(id);
-        }
-        const totalCartIds = Object.keys(getCartData());
-        setTotalCarts(totalCartIds);
-    };
 
     useEffect(() => {
         // heart icon turns red when navigated in my-cart route
@@ -37,6 +31,21 @@ const Product = ({ product }) => {
             setTriggerHeartIcon(true);
         }
     }, [id]);
+
+    const handleHeartBtn = () => {
+        setTriggerHeartIcon(!triggerHeartIcon);
+        if (triggerHeartIcon) {
+            removeFromCartDb(id);
+        } else {
+            addCartToDb(id);
+        }
+        const totalCartIds = Object.keys(getCartData());
+        setTotalCarts(totalCartIds);
+    };
+
+    const handleOrderNowBtn = () => {
+        addOrderToDb(id);
+    };
 
     setTimeout(() => {
         setShowAnimation(true);
@@ -75,7 +84,7 @@ const Product = ({ product }) => {
                     </div>
                 </div>
                 <div className='card-actions justify-end mt-3'>
-                    <button className="btn bg-orange-400 hover:bg-orange-500 text-white font-bold">Order Now</button>
+                    <button className="btn bg-orange-400 hover:bg-orange-500 text-white font-bold" onClick={handleOrderNowBtn}>Order Now</button>
                 </div>
             </div>
         </div>
