@@ -25,10 +25,10 @@ const Product = ({ product }) => {
     };
 
     useEffect(() => {
-        // heart icon turns red when navigated in order-review route
+        // heart icon turns red when navigated in my-cart route
         const inPages = window.location.pathname.split('/');
-        const inOrderReviewPage = inPages.find(inPage => inPage === 'order-review');
-        if (inOrderReviewPage === 'order-review') {
+        const inMyCartsPage = inPages.find(inPage => inPage === 'my-cart');
+        if (inMyCartsPage === 'my-cart') {
             setTriggerHeartIcon(true);
         }
 

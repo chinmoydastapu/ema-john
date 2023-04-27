@@ -2,7 +2,6 @@ import { createBrowserRouter } from "react-router-dom";
 import Main from "../layouts/Main";
 import Home from "../components/Home/Home";
 import MyOrders from "../components/MyOrders/MyOrders";
-import OrderReview from "../components/OrderReview/OrderReview";
 import About from "../components/About/About";
 import Contact from "../components/Contact/Contact";
 import Signup from "../components/Signup/Signup";
@@ -10,6 +9,7 @@ import Login from "../components/Login/Login";
 import Shop from "../components/Inventory/Shop";
 import { productLoader } from "../loaders/ProductLoader";
 import SideNav from "../layouts/SideNav";
+import MyCarts from "../components/MyCarts/MyCarts";
 
 export const router = createBrowserRouter([
     {
@@ -40,8 +40,8 @@ export const router = createBrowserRouter([
                 ],
             },
             {
-                path: '/order-review',
-                element: <OrderReview></OrderReview>
+                path: '/my-cart',
+                element: <MyCarts></MyCarts>
             },
             {
                 path: '/about',

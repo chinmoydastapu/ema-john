@@ -57,7 +57,7 @@ const HeaderNav = () => {
                         !toggleTheme ? <SunIcon className="w-6 h-6 text-orange-300 cursor-pointer" /> : <MoonIcon className="w-6 h-6 text-gray-300 cursor-pointer" />
                     }
                 </div>
-                <div className="text-secondary ml-4 indicator cursor-pointer" onClick={() => navigate('/order-review')}>
+                <div className="text-secondary ml-4 indicator cursor-pointer" onClick={() => navigate('/my-cart')}>
                     <ShoppingCartIcon className="h-6 w-6" />
                     <span className="indicator-item badge badge-error">{totalCarts.length}</span>
                 </div>

@@ -3,7 +3,7 @@ import { cartFromLocalStorage } from "../../loaders/ProductLoader";
 import Product from "../Inventory/Product";
 import { Link } from "react-router-dom";
 
-const OrderReview = () => {
+const MyCarts = () => {
     const [cartProducts, setCartProducts] = useState([]);
 
     useEffect(() => {
@@ -36,4 +36,4 @@ const OrderReview = () => {
     );
 };
 
-export default OrderReview;
+export default MyCarts;
