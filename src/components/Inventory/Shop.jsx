@@ -9,7 +9,7 @@ const Shop = () => {
 
     return (
         <>
-            <div className="w-3/4 mx-auto lg:mx-20">
+            <div className="w-11/12 mx-auto lg:mx-20">
                 <h1 className="text-orange-400 text-2xl font-semibold mt-10 mb-5 text-center">Our Available Products</h1>
                 <div className={`mb-10 grid grid-cols-1 gap-5`}>
                     {

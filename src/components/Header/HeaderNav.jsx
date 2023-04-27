@@ -44,7 +44,7 @@ const HeaderNav = () => {
                     </label>
                     <ul tabIndex={0} className={`menu menu-compact mt-3 shadow bg-base-300 w-64 transition-all duration-500 ease-in-out absolute ${toggleMenu ? 'left-0 opacity-100' : 'left-[-300px] opacity-50'}`}>
                         {
-                            navItems.map((item, idx) => <li key={idx} onClick={() => setToggleMenu(!toggleMenu)}><Link to={item.path} className="hover:bg-base-100 focus:bg-base-100 active:bg-base-100">{item.name}</Link></li>)
+                            navItems.map((item, idx) => <li key={idx} onClick={() => {setToggleMenu(!toggleMenu); setActiveItem(item.path)}}><Link to={item.path} className={`hover:bg-base-100 focus:bg-base-100 active:bg-base-100 ${activeItem === item.path ? 'text-orange-500' : ''}`}>{item.name}</Link></li>)
                         }
                     </ul>
                 </div>
