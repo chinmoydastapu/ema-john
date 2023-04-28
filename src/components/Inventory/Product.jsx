@@ -6,10 +6,9 @@ import {
     addCartToDb,
     getCartData,
     removeFromCartDb,
-    addOrderToDb
 } from '../../utilities/LocalStorage';
 
-const Product = ({ product }) => {
+const Product = ({ product, handleOrderNowBtn }) => {
     const { id, name, category, img, price, seller, ratings, ratingsCount, stock } = product;
 
     const [initialAnimation, setinitialAnimation] = useState(false);
@@ -41,10 +40,6 @@ const Product = ({ product }) => {
         }
         const totalCartIds = Object.keys(getCartData());
         setTotalCarts(totalCartIds);
-    };
-
-    const handleOrderNowBtn = () => {
-        addOrderToDb(id);
     };
 
     setTimeout(() => {
@@ -84,7 +79,7 @@ const Product = ({ product }) => {
                     </div>
                 </div>
                 <div className='card-actions justify-end mt-3'>
-                    <button className="btn bg-orange-400 hover:bg-orange-500 text-white font-bold" onClick={handleOrderNowBtn}>Order Now</button>
+                    <button className="btn bg-orange-400 hover:bg-orange-500 text-white font-bold" onClick={() => handleOrderNowBtn(id)}>Order Now</button>
                 </div>
             </div>
         </div>
