@@ -4,7 +4,7 @@ import { OrderContext, ProductsContext } from '../../App';
 import { deleteOrderData, getOrderData } from '../../utilities/LocalStorage';
 import { totalOrderedItemsFromLS } from '../../loaders/ProductLoader';
 import { Toaster, toast } from 'react-hot-toast';
-import { RemoveOrderContext } from '../../layouts/SideNav';
+import { RemoveOrderContext, RemoveSingleOrderContext } from '../../layouts/SideNav';
 
 const OrderSummary = () => {
     const [selectedITems, setSelectedItems] = useState(0);
@@ -12,6 +12,7 @@ const OrderSummary = () => {
     const { products } = useContext(ProductsContext);
     const { orderedProduct } = useContext(OrderContext);
     const { setRemoveOrder } = useContext(RemoveOrderContext);
+    const { removeSingleOrder, setRemoveSingleOrder } = useContext(RemoveSingleOrderContext);
 
     useEffect(() => {
         // Adding quantity to all ordered products
@@ -30,7 +31,13 @@ const OrderSummary = () => {
         // Calculating total selected items
         const totalSelectedItems = totalOrderedItemsFromLS();
         setSelectedItems(totalSelectedItems);
-    }, [products, orderedProduct]);
+
+        // When Trash button of Order cart triggered, update the state of OrderSummary
+        if(removeSingleOrder) {
+            setSelectedItems(selectedITems-1);
+            setRemoveSingleOrder(false);
+        }
+    }, [products, orderedProduct, selectedITems, removeSingleOrder, setRemoveSingleOrder]);
 
     const handleClearOrders = () => {
         deleteOrderData();

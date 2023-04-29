@@ -3,19 +3,21 @@ import { orderFromLocalStorage } from "../../loaders/ProductLoader";
 import Order from "./Order";
 import { removeFromOrderDb } from "../../utilities/LocalStorage";
 import { Link } from "react-router-dom";
-import { RemoveOrderContext } from "../../layouts/SideNav";
+import { RemoveOrderContext, RemoveSingleOrderContext } from "../../layouts/SideNav";
+import { Toaster, toast } from "react-hot-toast";
 
 const MyOrders = () => {
     const [orderedProducts, setOrderedProducts] = useState([]);
 
-    const {removeOrder, setRemoveOrder} = useContext(RemoveOrderContext);
+    const { removeOrder, setRemoveOrder } = useContext(RemoveOrderContext);
+    const { setRemoveSingleOrder } = useContext(RemoveSingleOrderContext);
 
     useEffect(() => {
         orderFromLocalStorage()
             .then(orders => setOrderedProducts(orders));
 
         // When removeOrder turns true, we set the ordered products empty
-        if(removeOrder) {
+        if (removeOrder) {
             setOrderedProducts([]);
             setRemoveOrder(false);
         }
@@ -26,6 +28,12 @@ const MyOrders = () => {
 
         const remainingProducts = orderedProducts.filter(orderedProduct => orderedProduct.id !== id);
         setOrderedProducts(remainingProducts);
+    };
+
+    const handleTrashBtn = id => {
+        toast.success("Successfully Removed Order!");
+        setRemoveSingleOrder(true);
+        handleRemoveOrderedProduct(id);
     };
 
     return (
@@ -40,8 +48,10 @@ const MyOrders = () => {
                 orderedProducts?.map(orderedProduct => <Order
                     key={orderedProduct.id}
                     orderedProduct={orderedProduct}
-                    handleRemoveOrderedProduct={handleRemoveOrderedProduct}></Order>)
+                    handleRemoveOrderedProduct={handleRemoveOrderedProduct}
+                    handleTrashBtn={handleTrashBtn}></Order>)
             }
+            <Toaster />
         </div>
     );
 };
