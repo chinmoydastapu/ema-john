@@ -10,17 +10,24 @@ const addCartToDb = id => {
 // for order data
 const addOrderToDb = id => {
     let orderData = getOrderData();
-    // add quantity
-    const quantity = orderData[id];
-    if (!quantity) {
-        orderData[id] = 1;
-    }
-    else {
-        const newQuantity = quantity + 1;
-        orderData[id] = newQuantity;
-    }
+    orderData[id] = 1;
+    
     localStorage.setItem('order', JSON.stringify(orderData));
 }
+// for order data
+// const addOrderToDb = id => {
+//     let orderData = getOrderData();
+//     // add quantity
+//     const quantity = orderData[id];
+//     if (!quantity) {
+//         orderData[id] = 1;
+//     }
+//     else {
+//         const newQuantity = quantity + 1;
+//         orderData[id] = newQuantity;
+//     }
+//     localStorage.setItem('order', JSON.stringify(orderData));
+// }
 
 const removeFromCartDb = id => {
     const cartData = getCartData();

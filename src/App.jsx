@@ -6,11 +6,13 @@ import { router } from "./routes/routes";
 export const ThemeContext = createContext();
 export const CartContext = createContext();
 export const ProductsContext = createContext();
+export const OrderContext = createContext();
 
 const App = () => {
   const [toggleTheme, setToggleTheme] = useState(false);
   const [totalCarts, setTotalCarts] = useState(['']);
-  const [products, setProducts] = useState([{}]);
+  const [products, setProducts] = useState([]);
+  const [orderedProduct, setOrderedProduct] = useState({});
 
   useEffect(() => {
     productLoader().then(res => setProducts(res));
@@ -20,8 +22,10 @@ const App = () => {
     <div data-theme={!toggleTheme ? 'night' : 'autumn'}>
       <ThemeContext.Provider value={[toggleTheme, setToggleTheme]}>
         <CartContext.Provider value={{ totalCarts, setTotalCarts }}>
-          <ProductsContext.Provider value={{products}}>
-            <RouterProvider router={router}></RouterProvider>
+          <ProductsContext.Provider value={{ products }}>
+            <OrderContext.Provider value={{orderedProduct, setOrderedProduct}}>
+              <RouterProvider router={router}></RouterProvider>
+            </OrderContext.Provider>
           </ProductsContext.Provider>
         </CartContext.Provider>
       </ThemeContext.Provider>

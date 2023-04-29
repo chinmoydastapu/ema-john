@@ -1,18 +1,30 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Product from "./Product";
 import { useLoaderData } from "react-router-dom";
-import { addOrderToDb } from "../../utilities/LocalStorage";
+import { addOrderToDb, getOrderData } from "../../utilities/LocalStorage";
 import { Toaster, toast } from "react-hot-toast";
+import { OrderContext } from "../../App";
 
 const Shop = () => {
     const products = useLoaderData();
 
     const [visibleProducts, setVisibleProducts] = useState(products.slice(0, 5));
 
+    const { setOrderedProduct } = useContext(OrderContext);
+
     const handleOrderNowBtn = (id) => {
-        addOrderToDb(id);
         const product = visibleProducts.find(p => p.id === id);
-        toast.success(`${product ? product.name : ''} Added to Your Order List`);
+        setOrderedProduct(product);
+
+        // Displaying Toast according to existing product
+        const orderIds = Object.keys(getOrderData());
+        const existed = orderIds.find(orderId => orderId === id);
+        if(existed) {
+            toast.error("This Order is Already Added");
+        } else {
+            addOrderToDb(id);
+            toast.success(`${product ? product.name : ''} Added to Your Order List`);
+        }
     };
 
     return (
@@ -21,7 +33,10 @@ const Shop = () => {
                 <h1 className="text-orange-400 text-2xl font-semibold mt-10 mb-5 text-center">Our Available Products</h1>
                 <div className={`mb-10 grid grid-cols-1 gap-5`}>
                     {
-                        visibleProducts.map(product => <Product key={product.id} product={product} handleOrderNowBtn={handleOrderNowBtn}></Product>)
+                        visibleProducts.map(product => <Product 
+                            key={product.id} 
+                            product={product} 
+                            handleOrderNowBtn={handleOrderNowBtn}></Product>)
                     }
                 </div>
                 <button className="btn text-white font-bold bg-orange-400 hover:bg-orange-500 mt-5 mb-10 block w-fit mx-auto"
