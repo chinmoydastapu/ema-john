@@ -4,12 +4,14 @@ import { OrderContext, ProductsContext } from '../../App';
 import { deleteOrderData, getOrderData } from '../../utilities/LocalStorage';
 import { totalOrderedItemsFromLS } from '../../loaders/ProductLoader';
 import { Toaster, toast } from 'react-hot-toast';
+import { RemoveOrderContext } from '../../layouts/SideNav';
 
 const OrderSummary = () => {
     const [selectedITems, setSelectedItems] = useState(0);
 
     const { products } = useContext(ProductsContext);
     const { orderedProduct } = useContext(OrderContext);
+    const { setRemoveOrder } = useContext(RemoveOrderContext);
 
     useEffect(() => {
         // Adding quantity to all ordered products
@@ -20,9 +22,8 @@ const OrderSummary = () => {
                 const quantity = savedOrders[orderId];
                 previousAddedProduct.quantity = quantity;
             }
-            if(orderedProduct.id === orderId) {
+            if (orderedProduct.id === orderId) {
                 orderedProduct.quantity = previousAddedProduct.quantity;
-                console.log(previousAddedProduct);
             }
         }
 
@@ -34,6 +35,7 @@ const OrderSummary = () => {
     const handleClearOrders = () => {
         deleteOrderData();
         setSelectedItems(0);
+        setRemoveOrder(true);
         toast.success("Cleared Order List");
     };
 

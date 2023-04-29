@@ -1,16 +1,25 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { orderFromLocalStorage } from "../../loaders/ProductLoader";
 import Order from "./Order";
 import { removeFromOrderDb } from "../../utilities/LocalStorage";
 import { Link } from "react-router-dom";
+import { RemoveOrderContext } from "../../layouts/SideNav";
 
 const MyOrders = () => {
     const [orderedProducts, setOrderedProducts] = useState([]);
 
+    const {removeOrder, setRemoveOrder} = useContext(RemoveOrderContext);
+
     useEffect(() => {
         orderFromLocalStorage()
             .then(orders => setOrderedProducts(orders));
-    }, []);
+
+        // When removeOrder turns true, we set the ordered products empty
+        if(removeOrder) {
+            setOrderedProducts([]);
+            setRemoveOrder(false);
+        }
+    }, [removeOrder, setRemoveOrder]);
 
     const handleRemoveOrderedProduct = id => {
         removeFromOrderDb(id);
