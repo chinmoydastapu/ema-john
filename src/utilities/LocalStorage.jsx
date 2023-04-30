@@ -14,20 +14,21 @@ const addOrderToDb = id => {
     
     localStorage.setItem('order', JSON.stringify(orderData));
 }
-// for order data
-// const addOrderToDb = id => {
-//     let orderData = getOrderData();
-//     // add quantity
-//     const quantity = orderData[id];
-//     if (!quantity) {
-//         orderData[id] = 1;
-//     }
-//     else {
-//         const newQuantity = quantity + 1;
-//         orderData[id] = newQuantity;
-//     }
-//     localStorage.setItem('order', JSON.stringify(orderData));
-// }
+
+// for quantity data
+const addQuantityToLS = id => {
+    let orderData = getOrderData();
+    // add quantity
+    const quantity = orderData[id];
+    if (!quantity) {
+        orderData[id] = 1;
+    }
+    else {
+        const newQuantity = quantity + 1;
+        orderData[id] = newQuantity;
+    }
+    localStorage.setItem('quantity', JSON.stringify(orderData));
+}
 
 const removeFromCartDb = id => {
     const cartData = getCartData();
@@ -78,6 +79,7 @@ const deleteOrderData = () => {
 export {
     addCartToDb,
     addOrderToDb,
+    addQuantityToLS,
     removeFromCartDb,
     removeFromOrderDb,
     getCartData,
