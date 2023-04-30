@@ -4,53 +4,54 @@ import { OrderContext, ProductsContext } from '../../App';
 import { deleteOrderData, getOrderData } from '../../utilities/LocalStorage';
 import { existedProduct, totalOrderedItemsFromLS } from '../../loaders/ProductLoader';
 import { Toaster, toast } from 'react-hot-toast';
-import { RemoveOrderContext, RemoveSingleOrderContext } from '../../layouts/SideNav';
 
 const OrderSummary = () => {
     const [selectedITems, setSelectedItems] = useState(0);
     const [totalPrice, setTotalPrice] = useState(0);
+    const [totalShippingCharge, setTotalShippingCharge] = useState(0);
+    const [totalTax, setTotalTax] = useState(0);
+    const [grandTotal, setGrandTotal] = useState(0);
 
     const { products } = useContext(ProductsContext);
     const { orderedProduct } = useContext(OrderContext);
-    const { setRemoveOrder } = useContext(RemoveOrderContext);
-    const { removeSingleOrder, setRemoveSingleOrder } = useContext(RemoveSingleOrderContext);
 
     useEffect(() => {
-        // Adding quantity to all ordered products
+        // Traversing through all products for calculating Order Summary data
         const savedOrders = getOrderData();
-        let previousPrice = 0;
+        let price = 0;
+        let shippingCharge = 0;
         for (const orderId in savedOrders) {
             const previousAddedProduct = products.find(product => product.id === orderId);
             if (previousAddedProduct) {
                 const quantity = savedOrders[orderId];
                 previousAddedProduct.quantity = quantity;
-                previousPrice += previousAddedProduct.price;
-            }
-            if (orderedProduct.id === orderId) {
-                orderedProduct.quantity = previousAddedProduct.quantity;
+
+                // Calculating total price
+                price += previousAddedProduct.price + (Object.keys(orderedProduct).length !== 0 ? (existedProduct(orderedProduct.id) ? 0 : orderedProduct.price) : 0);
+
+                // Calculating total shipping charge
+                shippingCharge += previousAddedProduct.shipping + (Object.keys(orderedProduct).length !== 0 ? (existedProduct(orderedProduct.id) ? 0 : orderedProduct.shipping) : 0)
+                console.log("Automatically came initially!");
             }
         }
+        setTotalPrice(price);
+        setTotalShippingCharge(shippingCharge);
 
-        // Calculating total selected items
+        // Calculating Tax
+        const tax = parseFloat((price * 0.05).toFixed(2));
+        setTotalTax(tax);
+
+        // Calculating Grand Total
+        setGrandTotal(price + shippingCharge + tax);
+
+        // Getting total selected items for updating state
         const totalSelectedItems = totalOrderedItemsFromLS();
         setSelectedItems(totalSelectedItems);
-
-        // Calculating total price
-        const currentTotalPrice = previousPrice + (Object.keys(orderedProduct).length !== 0 ? existedProduct(orderedProduct.id) ? 0 : orderedProduct.price : 0);
-        setTotalPrice(currentTotalPrice);
     }, [products, orderedProduct]);
-
-    // When Trash button of Order cart triggered, update the state of OrderSummary
-    if (removeSingleOrder) {
-        setSelectedItems(selectedITems - 1);
-        setRemoveSingleOrder(false);
-    }
 
     const handleClearOrders = () => {
         deleteOrderData();
         setSelectedItems(0);
-        setTotalPrice(0);
-        setRemoveOrder(true);
         toast.success("Cleared Order List");
     };
 
@@ -67,13 +68,16 @@ const OrderSummary = () => {
             </div>
             <div className='flex justify-between items-center'>
                 <p className='mt-3'><span className='font-semibold'>Total Shipping Charge:</span> </p>
-                <span>{ }</span>
+                <span>{totalShippingCharge}</span>
             </div>
             <div className='flex justify-between items-center'>
-                <p className='mt-3'><span className='font-semibold'>Tax:</span> <span className="text-sm">(15%)</span></p>
-                <span>{ }</span>
+                <p className='mt-3'><span className='font-semibold'>Tax</span><span className="text-sm">(5%): </span></p>
+                <span>{totalTax}</span>
             </div>
-            <h3 className='mt-3 mb-5 text-xl font-bold'>Grand Total: </h3>
+            <div className='flex justify-between items-center'>
+                <h3 className='mt-3 mb-5 text-xl font-bold'>Grand Total: </h3>
+                <span>{grandTotal}</span>
+            </div>
             <div className="flex justify-between items-center p-3 my-3 bg-red-600 hover:bg-red-500 w-full text-white rounded-md cursor-pointer" onClick={handleClearOrders}>
                 <div className="text-xl font-semibold">Clear Orders</div>
                 <TrashIcon className='ml-2 h-5 w-5' />

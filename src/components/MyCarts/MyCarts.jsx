@@ -1,15 +1,12 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { cartFromLocalStorage, existedProduct } from "../../loaders/ProductLoader";
 import Product from "../Inventory/Product";
 import { Link } from "react-router-dom";
 import { addOrderToDb } from "../../utilities/LocalStorage";
 import { Toaster, toast } from "react-hot-toast";
-import { OrderContext } from "../../App";
 
 const MyCarts = () => {
     const [cartProducts, setCartProducts] = useState([]);
-
-    const { setOrderedProduct } = useContext(OrderContext);
 
     useEffect(() => {
         cartFromLocalStorage()
@@ -19,13 +16,12 @@ const MyCarts = () => {
     }, []);
 
     const handleOrderNowBtn = (id) => {
-        const product = cartProducts.find(p => p.id === id);
-        setOrderedProduct(product);
-
         // Displaying Toast according to existing product
-        if(existedProduct(id)) {
+        if (existedProduct(id)) {
             toast.error("This Order is Already Added");
         } else {
+            const product = cartProducts.find(p => p.id === id);
+            
             addOrderToDb(id);
             toast.success(`${product ? product.name : ''} Added to Your Order List`);
         }

@@ -14,13 +14,13 @@ const Shop = () => {
     const { setOrderedProduct } = useContext(OrderContext);
 
     const handleOrderNowBtn = (id) => {
-        const product = visibleProducts.find(p => p.id === id);
-        setOrderedProduct(product);
-
-        // Displaying Toast according to existing product
-        if(existedProduct(id)) {
+        // Displaying Toast or adding data according to existing product
+        if (existedProduct(id)) {
             toast.error("This Order is Already Added");
         } else {
+            const product = visibleProducts.find(p => p.id === id);
+            // This is only for re-render, when order now button is clicked
+            setOrderedProduct(product);
             addOrderToDb(id);
             toast.success(`${product ? product.name : ''} Added to Your Order List`);
         }
@@ -32,9 +32,9 @@ const Shop = () => {
                 <h1 className="text-orange-400 text-2xl font-semibold mt-10 mb-5 text-center">Our Available Products</h1>
                 <div className={`mb-10 grid grid-cols-1 gap-5`}>
                     {
-                        visibleProducts.map(product => <Product 
-                            key={product.id} 
-                            product={product} 
+                        visibleProducts.map(product => <Product
+                            key={product.id}
+                            product={product}
                             handleOrderNowBtn={handleOrderNowBtn}></Product>)
                     }
                 </div>
