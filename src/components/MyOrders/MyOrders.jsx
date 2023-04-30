@@ -9,26 +9,25 @@ import { OrderSummaryContext } from "../../layouts/SideNav";
 const MyOrders = () => {
     const [orderedProducts, setOrderedProducts] = useState([]);
 
-    const {removeOrder} = useContext(OrderSummaryContext);
+    const { removeOrder, setRemoveSingleOrder } = useContext(OrderSummaryContext);
 
     useEffect(() => {
         orderFromLocalStorage()
             .then(orders => setOrderedProducts(orders));
-        
-        if(removeOrder) {
+
+        if (removeOrder) {
             setOrderedProducts([]);
         }
     }, [removeOrder]);
 
-    const handleRemoveOrderedProduct = id => {
+    const handleTrashBtn = id => {
         removeFromOrderDb(id);
+        setRemoveSingleOrder(true);
 
         const remainingProducts = orderedProducts.filter(orderedProduct => orderedProduct.id !== id);
         setOrderedProducts(remainingProducts);
-    };
 
-    const handleTrashBtn = id => {
-        toast.success("Successfully Removed Order!", id);
+        toast.success("Successfully Removed Order!");
     };
 
     return (
@@ -43,7 +42,6 @@ const MyOrders = () => {
                 orderedProducts?.map(orderedProduct => <Order
                     key={orderedProduct.id}
                     orderedProduct={orderedProduct}
-                    handleRemoveOrderedProduct={handleRemoveOrderedProduct}
                     handleTrashBtn={handleTrashBtn}></Order>)
             }
             <Toaster />

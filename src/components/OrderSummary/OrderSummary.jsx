@@ -15,7 +15,7 @@ const OrderSummary = () => {
 
     const { products } = useContext(ProductsContext);
     const { orderedProduct } = useContext(OrderContext);
-    const { setRemoveOrder } = useContext(OrderSummaryContext);
+    const { setRemoveOrder, removeSingleOrder, setRemoveSingleOrder } = useContext(OrderSummaryContext);
 
     useEffect(() => {
         // Traversing through all products for calculating Order Summary data
@@ -33,23 +33,41 @@ const OrderSummary = () => {
 
                 // Calculating total shipping charge
                 shippingCharge += previousAddedProduct.shipping + (Object.keys(orderedProduct).length !== 0 ? (existedProduct(orderedProduct.id) ? 0 : orderedProduct.shipping) : 0)
-                // console.log("Automatically came initially!");
             }
         }
-        setTotalPrice(price);
-        setTotalShippingCharge(shippingCharge);
 
         // Calculating Tax
         const tax = parseFloat((price * 0.05).toFixed(2));
-        setTotalTax(tax);
 
-        // Calculating Grand Total
-        setGrandTotal(price + shippingCharge + tax);
+        // "if" is invoked when Order Trash Button is clicked for removing single order cart, "else" is invoked when triggered Order Now btn
+        if (removeSingleOrder) {
+            // Price updated
+            const priceAfterRemovingSingleOrder = price - (Object.keys(orderedProduct).length !== 0 ? (existedProduct(orderedProduct.id) ? 0 : orderedProduct.price) : 0)
+            setTotalPrice(priceAfterRemovingSingleOrder);
+
+            // Shipping Charge updated
+            const shippingChargeAfterRemovingSingleOrder = shippingCharge - (Object.keys(orderedProduct).length !== 0 ? (existedProduct(orderedProduct.id) ? 0 : orderedProduct.shipping) : 0)
+            setTotalShippingCharge(shippingChargeAfterRemovingSingleOrder);
+
+            // Tax updated
+            const taxAfterRemovingSingleOrder = tax - (Object.keys(orderedProduct).length !== 0 ? (existedProduct(orderedProduct.id) ? 0 : orderedProduct.price) : 0) * 0.05
+            setTotalTax(taxAfterRemovingSingleOrder);
+
+            // Grand Total Price updated
+            setGrandTotal(priceAfterRemovingSingleOrder + shippingChargeAfterRemovingSingleOrder + taxAfterRemovingSingleOrder);
+
+            setRemoveSingleOrder(false);
+        } else {
+            setTotalPrice(price);
+            setTotalShippingCharge(shippingCharge);
+            setTotalTax(tax);
+            setGrandTotal(price + shippingCharge + tax);
+        }
 
         // Getting total selected items for updating state
         const totalSelectedItems = totalOrderedItemsFromLS();
         setSelectedItems(totalSelectedItems);
-    }, [products, orderedProduct]);
+    }, [products, orderedProduct, removeSingleOrder, setRemoveSingleOrder]);
 
     const handleClearOrders = () => {
         deleteOrderData();
