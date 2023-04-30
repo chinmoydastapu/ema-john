@@ -9,7 +9,7 @@ import { OrderSummaryContext } from "../../layouts/SideNav";
 const MyOrders = () => {
     const [orderedProducts, setOrderedProducts] = useState([]);
 
-    const { removeOrder, setRemoveSingleOrder } = useContext(OrderSummaryContext);
+    const { removeOrder, setRemoveOrder, setRemoveSingleOrder } = useContext(OrderSummaryContext);
 
     useEffect(() => {
         orderFromLocalStorage()
@@ -17,8 +17,9 @@ const MyOrders = () => {
 
         if (removeOrder) {
             setOrderedProducts([]);
+            setRemoveOrder(false);
         }
-    }, [removeOrder]);
+    }, [removeOrder, setRemoveOrder]);
 
     const handleTrashBtn = id => {
         removeFromOrderDb(id);

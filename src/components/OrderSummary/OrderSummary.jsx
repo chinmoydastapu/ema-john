@@ -56,6 +56,7 @@ const OrderSummary = () => {
             // Grand Total Price updated
             setGrandTotal(priceAfterRemovingSingleOrder + shippingChargeAfterRemovingSingleOrder + taxAfterRemovingSingleOrder);
 
+            // After executing one time, resetting the state
             setRemoveSingleOrder(false);
         } else {
             setTotalPrice(price);
