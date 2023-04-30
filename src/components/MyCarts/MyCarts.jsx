@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from "react";
-import { cartFromLocalStorage } from "../../loaders/ProductLoader";
+import { cartFromLocalStorage, existedProduct } from "../../loaders/ProductLoader";
 import Product from "../Inventory/Product";
 import { Link } from "react-router-dom";
-import { addOrderToDb, getOrderData } from "../../utilities/LocalStorage";
+import { addOrderToDb } from "../../utilities/LocalStorage";
 import { Toaster, toast } from "react-hot-toast";
 import { OrderContext } from "../../App";
 
@@ -23,9 +23,7 @@ const MyCarts = () => {
         setOrderedProduct(product);
 
         // Displaying Toast according to existing product
-        const orderIds = Object.keys(getOrderData());
-        const existed = orderIds.find(orderId => orderId === id);
-        if(existed) {
+        if(existedProduct(id)) {
             toast.error("This Order is Already Added");
         } else {
             addOrderToDb(id);

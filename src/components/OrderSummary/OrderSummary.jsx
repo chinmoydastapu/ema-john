@@ -2,12 +2,13 @@ import { TrashIcon, CreditCardIcon } from '@heroicons/react/24/solid';
 import { useContext, useEffect, useState } from 'react';
 import { OrderContext, ProductsContext } from '../../App';
 import { deleteOrderData, getOrderData } from '../../utilities/LocalStorage';
-import { totalOrderedItemsFromLS } from '../../loaders/ProductLoader';
+import { existedProduct, totalOrderedItemsFromLS } from '../../loaders/ProductLoader';
 import { Toaster, toast } from 'react-hot-toast';
 import { RemoveOrderContext, RemoveSingleOrderContext } from '../../layouts/SideNav';
 
 const OrderSummary = () => {
     const [selectedITems, setSelectedItems] = useState(0);
+    const [totalPrice, setTotalPrice] = useState(0);
 
     const { products } = useContext(ProductsContext);
     const { orderedProduct } = useContext(OrderContext);
@@ -17,11 +18,13 @@ const OrderSummary = () => {
     useEffect(() => {
         // Adding quantity to all ordered products
         const savedOrders = getOrderData();
+        let previousPrice = 0;
         for (const orderId in savedOrders) {
             const previousAddedProduct = products.find(product => product.id === orderId);
             if (previousAddedProduct) {
                 const quantity = savedOrders[orderId];
                 previousAddedProduct.quantity = quantity;
+                previousPrice += previousAddedProduct.price;
             }
             if (orderedProduct.id === orderId) {
                 orderedProduct.quantity = previousAddedProduct.quantity;
@@ -32,16 +35,21 @@ const OrderSummary = () => {
         const totalSelectedItems = totalOrderedItemsFromLS();
         setSelectedItems(totalSelectedItems);
 
-        // When Trash button of Order cart triggered, update the state of OrderSummary
-        if(removeSingleOrder) {
-            setSelectedItems(selectedITems-1);
-            setRemoveSingleOrder(false);
-        }
-    }, [products, orderedProduct, selectedITems, removeSingleOrder, setRemoveSingleOrder]);
+        // Calculating total price
+        const currentTotalPrice = previousPrice + (Object.keys(orderedProduct).length !== 0 ? existedProduct(orderedProduct.id) ? 0 : orderedProduct.price : 0);
+        setTotalPrice(currentTotalPrice);
+    }, [products, orderedProduct]);
+
+    // When Trash button of Order cart triggered, update the state of OrderSummary
+    if (removeSingleOrder) {
+        setSelectedItems(selectedITems - 1);
+        setRemoveSingleOrder(false);
+    }
 
     const handleClearOrders = () => {
         deleteOrderData();
         setSelectedItems(0);
+        setTotalPrice(0);
         setRemoveOrder(true);
         toast.success("Cleared Order List");
     };
@@ -55,7 +63,7 @@ const OrderSummary = () => {
             </div>
             <div className='flex justify-between items-center'>
                 <p className='mt-3'><span className='font-semibold'>Total Price:</span> </p>
-                <span>{ }</span>
+                <span>{totalPrice}</span>
             </div>
             <div className='flex justify-between items-center'>
                 <p className='mt-3'><span className='font-semibold'>Total Shipping Charge:</span> </p>

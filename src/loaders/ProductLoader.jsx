@@ -33,6 +33,13 @@ export const totalOrderedItemsFromLS = () => {
     return totalOrderedItems;
 };
 
+export const existedProduct = id => {
+    const orderIds = Object.keys(getOrderData());
+    const existed = orderIds.find(orderId => orderId === id);
+
+    return existed;
+};
+
 const getCartProducts = res => {
     let cartProducts = [];
     const cartProductId = Object.keys(getCartData());
