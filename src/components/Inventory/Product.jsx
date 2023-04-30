@@ -61,7 +61,7 @@ const Product = ({ product, handleOrderNowBtn }) => {
                     {name}
                 </h2>
                 <div className="flex justify-start gap-3 text-2xl text-orange-400 mt-3">
-                    <div><span className="font-bold">Price:</span> {price}</div>
+                    <div><span className="font-bold">Price:</span> ${price}</div>
                     <div className="badge badge-secondary">{stock} in stock</div>
                 </div>
                 <div className="card-actions justify-end mt-2">

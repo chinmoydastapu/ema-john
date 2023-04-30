@@ -4,6 +4,7 @@ import { OrderContext, ProductsContext } from '../../App';
 import { deleteOrderData, getOrderData } from '../../utilities/LocalStorage';
 import { existedProduct, totalOrderedItemsFromLS } from '../../loaders/ProductLoader';
 import { Toaster, toast } from 'react-hot-toast';
+import { OrderSummaryContext } from '../../layouts/SideNav';
 
 const OrderSummary = () => {
     const [selectedITems, setSelectedItems] = useState(0);
@@ -14,6 +15,7 @@ const OrderSummary = () => {
 
     const { products } = useContext(ProductsContext);
     const { orderedProduct } = useContext(OrderContext);
+    const { setRemoveOrder } = useContext(OrderSummaryContext);
 
     useEffect(() => {
         // Traversing through all products for calculating Order Summary data
@@ -31,7 +33,7 @@ const OrderSummary = () => {
 
                 // Calculating total shipping charge
                 shippingCharge += previousAddedProduct.shipping + (Object.keys(orderedProduct).length !== 0 ? (existedProduct(orderedProduct.id) ? 0 : orderedProduct.shipping) : 0)
-                console.log("Automatically came initially!");
+                // console.log("Automatically came initially!");
             }
         }
         setTotalPrice(price);
@@ -52,31 +54,36 @@ const OrderSummary = () => {
     const handleClearOrders = () => {
         deleteOrderData();
         setSelectedItems(0);
+        setTotalPrice(0);
+        setTotalShippingCharge(0);
+        setTotalTax(0);
+        setGrandTotal(0);
+        setRemoveOrder(true);
         toast.success("Cleared Order List");
     };
 
     return (
-        <div className="w-full lg:w-96 lg:sticky top-16 mx-auto h-fit p-5 text-black bg-orange-400">
+        <div className="w-full lg:w-96 lg:sticky top-16 mx-auto select-none h-fit p-5 text-black bg-orange-400">
             <h1 className="text-xl font-semibold border-b w-fit px-3 mx-auto py-2">Order Summary</h1>
-            <div className='flex justify-between items-center'>
+            <div className='flex justify-between items-center transition-scale duration-500 ease-in-out hover:scale-105'>
                 <p className='mt-5'><span className='font-semibold'>Selected Items:</span> </p>
                 <span>{selectedITems}</span>
             </div>
-            <div className='flex justify-between items-center'>
+            <div className='flex justify-between items-center transition-scale duration-500 ease-in-out hover:scale-105'>
                 <p className='mt-3'><span className='font-semibold'>Total Price:</span> </p>
-                <span>{totalPrice}</span>
+                <span>${totalPrice}</span>
             </div>
-            <div className='flex justify-between items-center'>
+            <div className='flex justify-between items-center transition-scale duration-500 ease-in-out hover:scale-105'>
                 <p className='mt-3'><span className='font-semibold'>Total Shipping Charge:</span> </p>
-                <span>{totalShippingCharge}</span>
+                <span>${totalShippingCharge}</span>
             </div>
-            <div className='flex justify-between items-center'>
+            <div className='flex justify-between items-center transition-scale duration-500 ease-in-out hover:scale-105'>
                 <p className='mt-3'><span className='font-semibold'>Tax</span><span className="text-sm">(5%): </span></p>
-                <span>{totalTax}</span>
+                <span>${totalTax}</span>
             </div>
-            <div className='flex justify-between items-center'>
-                <h3 className='mt-3 mb-5 text-xl font-bold'>Grand Total: </h3>
-                <span>{grandTotal}</span>
+            <div className='flex justify-between items-center text-xl font-bold select-text'>
+                <h3 className='mt-3 mb-5'>Grand Total: </h3>
+                <span>${grandTotal}</span>
             </div>
             <div className="flex justify-between items-center p-3 my-3 bg-red-600 hover:bg-red-500 w-full text-white rounded-md cursor-pointer" onClick={handleClearOrders}>
                 <div className="text-xl font-semibold">Clear Orders</div>

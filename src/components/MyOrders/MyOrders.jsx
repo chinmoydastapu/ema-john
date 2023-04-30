@@ -1,17 +1,24 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { orderFromLocalStorage } from "../../loaders/ProductLoader";
 import Order from "./Order";
 import { removeFromOrderDb } from "../../utilities/LocalStorage";
 import { Link } from "react-router-dom";
 import { Toaster, toast } from "react-hot-toast";
+import { OrderSummaryContext } from "../../layouts/SideNav";
 
 const MyOrders = () => {
     const [orderedProducts, setOrderedProducts] = useState([]);
 
+    const {removeOrder} = useContext(OrderSummaryContext);
+
     useEffect(() => {
         orderFromLocalStorage()
             .then(orders => setOrderedProducts(orders));
-    }, []);
+        
+        if(removeOrder) {
+            setOrderedProducts([]);
+        }
+    }, [removeOrder]);
 
     const handleRemoveOrderedProduct = id => {
         removeFromOrderDb(id);
