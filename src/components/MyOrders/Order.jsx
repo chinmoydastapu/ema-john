@@ -1,17 +1,26 @@
 /* eslint-disable react/prop-types */
 
 import { MinusCircleIcon, PlusCircleIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { useContext, useState } from "react";
-import { ThemeContext } from "../../App";
-import { setQuantityToLS } from "../../utilities/LocalStorage";
+import { useContext, useEffect, useState } from "react";
+import { ProductsContext, ThemeContext } from "../../App";
+import { getQuantityData, setQuantityToLS } from "../../utilities/LocalStorage";
 
 const Order = ({ orderedProduct, handleTrashBtn }) => {
     const [initialShow, setInitialShow] = useState(false);
     const [orderQuantity, setOrderQuantity] = useState(1);
 
     const [toggleTheme] = useContext(ThemeContext);
+    const { products } = useContext(ProductsContext);
 
     const { id, name, price, shipping, img, stock } = orderedProduct;
+
+    useEffect(() => {
+        const quantityObject = getQuantityData();
+        const prevProduct = products.find(p => p.id === id);
+        if(prevProduct) {
+            setOrderQuantity(quantityObject[id]);
+        }
+    }, [id, products]);
 
     const handleIncreaseQuantity = () => {
         const quantity = parseInt(orderQuantity) + 1;
@@ -78,7 +87,7 @@ const Order = ({ orderedProduct, handleTrashBtn }) => {
                 </div>
             </div>
             <div className="absolute -top-3 -right-3 cursor-pointer" onClick={() => handleTrashBtn(id)}>
-                <XMarkIcon className="w-8 h-8 bg-orange-300 text-orange-600 p-2 rounded-full" />
+                <XMarkIcon className="w-8 h-8 bg-orange-300 text-orange-700 p-2 rounded-full" />
             </div>
         </div>
     );
