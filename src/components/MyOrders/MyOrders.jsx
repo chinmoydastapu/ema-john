@@ -9,7 +9,19 @@ import { OrderSummaryContext } from "../../layouts/SideNav";
 const MyOrders = () => {
     const [orderedProducts, setOrderedProducts] = useState([]);
 
-    const { removeOrder, setRemoveOrder, setRemoveSingleOrder } = useContext(OrderSummaryContext);
+    const {
+        removeOrder,
+        setRemoveOrder,
+        totalSelectedItems,
+        setTotalSelectedItems,
+        totalPrice,
+        setTotalPrice,
+        totalShippingCharge,
+        setTotalShippingCharge,
+        totalTax,
+        setTotalTax,
+        setGrandTotal,
+    } = useContext(OrderSummaryContext);
 
     useEffect(() => {
         orderFromLocalStorage()
@@ -19,12 +31,33 @@ const MyOrders = () => {
             setOrderedProducts([]);
             setRemoveOrder(false);
         }
-    }, [removeOrder, setRemoveOrder]);
+    }, [removeOrder, setRemoveOrder]);  
 
     const handleTrashBtn = id => {
         removeFromOrderDb(id);
-        setRemoveSingleOrder(true);
 
+        // For removing single order cart and update the Order Summary data
+        const trashedProduct = orderedProducts.find(orderedProduct => orderedProduct.id === id);
+
+        // Selected Items Updated
+        setTotalSelectedItems(totalSelectedItems - 1);
+
+        // Price updated
+        const priceAfterRemovingSingleOrder = totalPrice - trashedProduct.price;
+        setTotalPrice(priceAfterRemovingSingleOrder);
+
+        // Shipping Charge updated
+        const shippingChargeAfterRemovingSingleOrder = totalShippingCharge - trashedProduct.shipping;
+        setTotalShippingCharge(shippingChargeAfterRemovingSingleOrder);
+
+        // Tax updated
+        const taxAfterRemovingSingleOrder = parseFloat((totalTax - (trashedProduct.price * 0.05)).toFixed(2));
+        setTotalTax(taxAfterRemovingSingleOrder);
+
+        // Grand Total Price updated
+        setGrandTotal(priceAfterRemovingSingleOrder + shippingChargeAfterRemovingSingleOrder + taxAfterRemovingSingleOrder);
+
+        // Remaining products for showing remaining items in the UI
         const remainingProducts = orderedProducts.filter(orderedProduct => orderedProduct.id !== id);
         setOrderedProducts(remainingProducts);
 

@@ -1,24 +1,28 @@
 import { TrashIcon, CreditCardIcon } from '@heroicons/react/24/solid';
-import { useContext, useEffect, useState } from 'react';
-import { OrderContext, ProductsContext } from '../../App';
+import { useContext, useEffect } from 'react';
 import { deleteOrderData, getOrderData } from '../../utilities/LocalStorage';
-import { existedProduct, totalOrderedItemsFromLS } from '../../loaders/ProductLoader';
 import { Toaster, toast } from 'react-hot-toast';
 import { OrderSummaryContext } from '../../layouts/SideNav';
+import { totalOrderedItemsFromLS } from '../../loaders/ProductLoader';
+import { ProductsContext } from '../../App';
 
 const OrderSummary = () => {
-    const [selectedITems, setSelectedItems] = useState(0);
-    const [totalPrice, setTotalPrice] = useState(0);
-    const [totalShippingCharge, setTotalShippingCharge] = useState(0);
-    const [totalTax, setTotalTax] = useState(0);
-    const [grandTotal, setGrandTotal] = useState(0);
-
     const { products } = useContext(ProductsContext);
-    const { orderedProduct } = useContext(OrderContext);
-    const { setRemoveOrder, removeSingleOrder, setRemoveSingleOrder } = useContext(OrderSummaryContext);
+    const { setRemoveOrder } = useContext(OrderSummaryContext);
+    const {
+        totalSelectedItems,
+        setTotalSelectedItems,
+        totalPrice,
+        setTotalPrice,
+        totalShippingCharge,
+        setTotalShippingCharge,
+        totalTax,
+        setTotalTax,
+        grandTotal,
+        setGrandTotal,
+    } = useContext(OrderSummaryContext);
 
     useEffect(() => {
-        // Traversing through all products for calculating Order Summary data
         const savedOrders = getOrderData();
         let price = 0;
         let shippingCharge = 0;
@@ -29,50 +33,40 @@ const OrderSummary = () => {
                 previousAddedProduct.quantity = quantity;
 
                 // Calculating total price
-                price += previousAddedProduct.price + (Object.keys(orderedProduct).length !== 0 ? (existedProduct(orderedProduct.id) ? 0 : orderedProduct.price) : 0);
+                price += previousAddedProduct.price;
 
                 // Calculating total shipping charge
-                shippingCharge += previousAddedProduct.shipping + (Object.keys(orderedProduct).length !== 0 ? (existedProduct(orderedProduct.id) ? 0 : orderedProduct.shipping) : 0)
+                shippingCharge += previousAddedProduct.shipping;
+                // console.log("execute in all clicks");
             }
         }
-
         // Calculating Tax
         const tax = parseFloat((price * 0.05).toFixed(2));
 
-        // "if" is invoked when Order Trash Button is clicked for removing single order cart, "else" is invoked when triggered Order Now btn
-        if (removeSingleOrder) {
-            // Price updated
-            const priceAfterRemovingSingleOrder = price - (Object.keys(orderedProduct).length !== 0 ? (existedProduct(orderedProduct.id) ? 0 : orderedProduct.price) : 0)
-            setTotalPrice(priceAfterRemovingSingleOrder);
-
-            // Shipping Charge updated
-            const shippingChargeAfterRemovingSingleOrder = shippingCharge - (Object.keys(orderedProduct).length !== 0 ? (existedProduct(orderedProduct.id) ? 0 : orderedProduct.shipping) : 0)
-            setTotalShippingCharge(shippingChargeAfterRemovingSingleOrder);
-
-            // Tax updated
-            const taxAfterRemovingSingleOrder = tax - (Object.keys(orderedProduct).length !== 0 ? (existedProduct(orderedProduct.id) ? 0 : orderedProduct.price) : 0) * 0.05
-            setTotalTax(taxAfterRemovingSingleOrder);
-
-            // Grand Total Price updated
-            setGrandTotal(priceAfterRemovingSingleOrder + shippingChargeAfterRemovingSingleOrder + taxAfterRemovingSingleOrder);
-
-            // After executing one time, resetting the state
-            setRemoveSingleOrder(false);
-        } else {
-            setTotalPrice(price);
-            setTotalShippingCharge(shippingCharge);
-            setTotalTax(tax);
-            setGrandTotal(price + shippingCharge + tax);
-        }
+        // Setting all values
+        totalPrice === 0 && setTotalPrice(price);
+        totalShippingCharge === 0 && setTotalShippingCharge(shippingCharge);
+        totalTax === 0 && setTotalTax(tax);
+        grandTotal === 0 && setGrandTotal(price + shippingCharge + tax);
 
         // Getting total selected items for updating state
-        const totalSelectedItems = totalOrderedItemsFromLS();
-        setSelectedItems(totalSelectedItems);
-    }, [products, orderedProduct, removeSingleOrder, setRemoveSingleOrder]);
+        const selectedItems = totalOrderedItemsFromLS();
+        setTotalSelectedItems(selectedItems);
+    }, [products,
+        totalSelectedItems,
+        totalPrice,
+        totalShippingCharge,
+        totalTax,
+        grandTotal,
+        setTotalSelectedItems,
+        setTotalPrice,
+        setTotalShippingCharge,
+        setTotalTax,
+        setGrandTotal]);
 
     const handleClearOrders = () => {
         deleteOrderData();
-        setSelectedItems(0);
+        setTotalSelectedItems(0);
         setTotalPrice(0);
         setTotalShippingCharge(0);
         setTotalTax(0);
@@ -86,7 +80,7 @@ const OrderSummary = () => {
             <h1 className="text-xl font-semibold border-b w-fit px-3 mx-auto py-2">Order Summary</h1>
             <div className='flex justify-between items-center transition-scale duration-500 ease-in-out hover:scale-105'>
                 <p className='mt-5'><span className='font-semibold'>Selected Items:</span> </p>
-                <span>{selectedITems}</span>
+                <span>{totalSelectedItems}</span>
             </div>
             <div className='flex justify-between items-center transition-scale duration-500 ease-in-out hover:scale-105'>
                 <p className='mt-3'><span className='font-semibold'>Total Price:</span> </p>

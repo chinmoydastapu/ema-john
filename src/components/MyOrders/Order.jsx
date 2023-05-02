@@ -34,17 +34,17 @@ const Order = ({ orderedProduct, handleTrashBtn }) => {
                 </div>
                 <div className="font-semibold">
                     <h3 className="text-left text-sm sm:text-xl font-semibold">{name}</h3>
-                    <div className="flex justify-between items-centerS gap-32">
-                        <div className="text-left">
+                    <div className="flex justify-between items-center gap-5 md:gap-32">
+                        <div className="text-left text-sm">
                             <p>Price: <span className="text-orange-400">${price}</span></p>
                             <p>Shipping: <span className="text-orange-400">${shipping}</span></p>
                         </div>
                         <div className="flex justify-center items-center gap-2">
-                            <MinusCircleIcon className="w-8 h-8 text-orange-400" onClick={handleDecreaseQuantity} />
+                            <MinusCircleIcon className="w-6 md:w-8 h-6 md:h-8 text-orange-400" onClick={handleDecreaseQuantity} />
                             <form>
-                                <input type="text" className="py-1 w-14 focus:outline-none text-center bg-orange-300 text-black rounded-md" defaultValue="0" />
+                                <input type="text" className="py-1 w-10 md:w-14 focus:outline-none text-center text-sm md:text-lg bg-orange-300 text-black rounded-md" defaultValue="1" />
                             </form>
-                            <PlusCircleIcon className="w-8 h-8 text-orange-400" onClick={handleIncreaseQuantity} />
+                            <PlusCircleIcon className="w-6 md:w-8 h-6 md:h-8 text-orange-400" onClick={handleIncreaseQuantity} />
                         </div>
                     </div>
                 </div>
