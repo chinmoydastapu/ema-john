@@ -11,13 +11,15 @@ const Order = ({ orderedProduct, handleTrashBtn }) => {
     const [toggleTheme] = useContext(ThemeContext);
 
     const { id, name, price, shipping, img } = orderedProduct;
+    const nameParts = name.split(' ').slice(0, 3);
+    const updatedName = nameParts.join(' ');
 
     const handleIncreaseQuantity = () => {
         setOrderQuantity(orderQuantity + 1);
     };
 
     const handleDecreaseQuantity = () => {
-        if(orderQuantity > 0) {
+        if (orderQuantity > 0) {
             setOrderQuantity(orderQuantity - 1);
         }
     };
@@ -33,19 +35,18 @@ const Order = ({ orderedProduct, handleTrashBtn }) => {
                     <img className="w-20 h-20 rounded-lg" src={img} alt="Loading..." />
                 </div>
                 <div className="font-semibold">
-                    <h3 className="text-left text-sm sm:text-xl font-semibold">{name}</h3>
-                    <div className="flex justify-between items-center gap-5 md:gap-32">
-                        <div className="text-left text-sm">
-                            <p>Price: <span className="text-orange-400">${price}</span></p>
-                            <p>Shipping: <span className="text-orange-400">${shipping}</span></p>
-                        </div>
-                        <div className="flex justify-center items-center gap-2">
-                            <MinusCircleIcon className="w-6 md:w-8 h-6 md:h-8 text-orange-400" onClick={handleDecreaseQuantity} />
-                            <form>
-                                <input type="text" className="py-1 w-10 md:w-14 focus:outline-none text-center text-sm md:text-lg bg-orange-300 text-black rounded-md" defaultValue="1" />
-                            </form>
-                            <PlusCircleIcon className="w-6 md:w-8 h-6 md:h-8 text-orange-400" onClick={handleIncreaseQuantity} />
-                        </div>
+                    <h3 className="text-left text-sm sm:text-xl font-semibold">{updatedName}</h3>
+                    <div className="text-left text-sm">
+                        <p>Price: <span className="text-orange-400">${price}</span></p>
+                        <p>Shipping: <span className="text-orange-400">${shipping}</span></p>
+                    </div>
+                    <div className="flex justify-start items-center gap-2 mt-3">
+                        <label htmlFor="order-quantity" className="text-sm">Quantity: </label>
+                        <MinusCircleIcon className="w-6 h-6 text-orange-400" onClick={handleDecreaseQuantity} />
+                        <form>
+                            <input id="order-quantity" type="text" className="py-[3px] w-10 focus:outline-none text-center text-sm  bg-orange-300 text-black rounded-md" defaultValue="1" />
+                        </form>
+                        <PlusCircleIcon className="w-6 h-6 text-orange-400" onClick={handleIncreaseQuantity} />
                     </div>
                 </div>
             </div>
