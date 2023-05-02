@@ -29,15 +29,11 @@ const OrderSummary = () => {
         for (const orderId in savedOrders) {
             const previousAddedProduct = products.find(product => product.id === orderId);
             if (previousAddedProduct) {
-                const quantity = savedOrders[orderId];
-                previousAddedProduct.quantity = quantity;
-
                 // Calculating total price
                 price += previousAddedProduct.price;
 
                 // Calculating total shipping charge
                 shippingCharge += previousAddedProduct.shipping;
-                // console.log("execute in all clicks");
             }
         }
         // Calculating Tax

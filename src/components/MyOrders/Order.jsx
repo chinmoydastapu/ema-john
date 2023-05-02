@@ -3,10 +3,11 @@
 import { MinusCircleIcon, PlusCircleIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { useContext, useState } from "react";
 import { ThemeContext } from "../../App";
+import { setQuantityToLS } from "../../utilities/LocalStorage";
 
 const Order = ({ orderedProduct, handleTrashBtn }) => {
     const [initialShow, setInitialShow] = useState(false);
-    const [orderQuantity, setOrderQuantity] = useState(0);
+    const [orderQuantity, setOrderQuantity] = useState(1);
 
     const [toggleTheme] = useContext(ThemeContext);
 
@@ -15,13 +16,30 @@ const Order = ({ orderedProduct, handleTrashBtn }) => {
     const updatedName = nameParts.join(' ');
 
     const handleIncreaseQuantity = () => {
-        setOrderQuantity(orderQuantity + 1);
+        const quantity = parseInt(orderQuantity) + 1;
+        setOrderQuantity(quantity);
+        orderedProduct.quantity = quantity;
+        setQuantityToLS(id, orderedProduct.quantity);
     };
 
     const handleDecreaseQuantity = () => {
-        if (orderQuantity > 0) {
-            setOrderQuantity(orderQuantity - 1);
+        const quantity = parseInt(orderQuantity) - 1;
+        if(quantity > 1) {
+            setOrderQuantity(quantity);
+            orderedProduct.quantity = orderQuantity;
+        } else {
+            setOrderQuantity(1);
+            orderedProduct.quantity = 1;
         }
+        setQuantityToLS(id, orderedProduct.quantity);
+    };
+
+    const handleQuantityChange = event => {
+        const quantity = !isNaN(event.target.value) ? event.target.value : 1;
+        setOrderQuantity(quantity);
+
+        orderedProduct.quantity = isNaN(parseInt(quantity)) ? 1 : parseInt(quantity);
+        setQuantityToLS(id, orderedProduct.quantity);
     };
 
     setTimeout(() => {
@@ -42,11 +60,11 @@ const Order = ({ orderedProduct, handleTrashBtn }) => {
                     </div>
                     <div className="flex justify-start items-center gap-2 mt-3">
                         <label htmlFor="order-quantity" className="text-sm">Quantity: </label>
-                        <MinusCircleIcon className="w-6 h-6 text-orange-400" onClick={handleDecreaseQuantity} />
+                        <MinusCircleIcon className="w-6 h-6 text-orange-400 cursor-pointer" onClick={handleDecreaseQuantity} />
                         <form>
-                            <input id="order-quantity" type="text" className="py-[3px] w-10 focus:outline-none text-center text-sm  bg-orange-300 text-black rounded-md" defaultValue="1" />
+                            <input id="order-quantity" type="text" className="py-[3px] w-10 focus:outline-none text-center text-sm  bg-orange-300 text-black rounded-md" value={orderQuantity}  onChange={handleQuantityChange} />
                         </form>
-                        <PlusCircleIcon className="w-6 h-6 text-orange-400" onClick={handleIncreaseQuantity} />
+                        <PlusCircleIcon className="w-6 h-6 text-orange-400 cursor-pointer" onClick={handleIncreaseQuantity} />
                     </div>
                 </div>
             </div>
