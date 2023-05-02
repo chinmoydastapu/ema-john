@@ -50,7 +50,7 @@ const Order = ({ orderedProduct, handleTrashBtn }) => {
         <div className={`flex justify-between items-center m-5 my-10 p-2 sm:p-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-1000 ease-in-out ${toggleTheme ? 'bg-slate-200' : 'bg-slate-800'} ${initialShow ? 'opacity-100' : 'scale-50 opacity-0 -translate-x-96'}`}>
             <div className="flex justify-start items-center gap-5">
                 <div>
-                    <img className="w-20 h-20 rounded-lg" src={img} alt="Loading..." />
+                    <img className="w-20 sm:w-24 h-24 rounded-lg" src={img} alt="Loading..." />
                 </div>
                 <div className="font-semibold">
                     <h3 className="text-left text-sm sm:text-xl font-semibold">{updatedName}</h3>

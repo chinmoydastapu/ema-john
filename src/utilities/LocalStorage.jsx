@@ -41,9 +41,12 @@ const removeFromCartDb = id => {
 
 const removeFromOrderDb = id => {
     const orderData = getOrderData();
+    const quantityData = getQuantityData();
     if (id in orderData) {
         delete orderData[id];
+        delete quantityData[id];
         localStorage.setItem('order', JSON.stringify(orderData));
+        localStorage.setItem('quantity', JSON.stringify(quantityData));
     }
 }
 
@@ -86,6 +89,7 @@ const deleteCartData = () => {
 
 const deleteOrderData = () => {
     localStorage.removeItem('order');
+    localStorage.removeItem('quantity');
 }
 
 export {
