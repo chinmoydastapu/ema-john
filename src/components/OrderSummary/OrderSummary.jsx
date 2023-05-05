@@ -5,8 +5,11 @@ import { Toaster, toast } from 'react-hot-toast';
 import { OrderSummaryContext } from '../../layouts/SideNav';
 import { totalOrderedItemsFromLS } from '../../loaders/ProductLoader';
 import { ProductsContext } from '../../App';
+import { useNavigate } from 'react-router-dom';
 
 const OrderSummary = () => {
+    const navigate = useNavigate();
+
     const { products } = useContext(ProductsContext);
     const { setRemoveOrder } = useContext(OrderSummaryContext);
     const {
@@ -102,7 +105,7 @@ const OrderSummary = () => {
                 <TrashIcon className='ml-2 h-5 w-5' />
             </div>
             <div className="flex justify-between items-center p-3 bg-green-600 hover:bg-green-500 w-full text-white rounded-md cursor-pointer">
-                <div className="text-lg font-medium">Proceed Checkout</div>
+                <div className="text-lg font-medium" onClick={() => navigate('/checkout')}>Proceed Checkout</div>
                 <CreditCardIcon className='ml-2 h-5 w-5' />
             </div>
             <Toaster />

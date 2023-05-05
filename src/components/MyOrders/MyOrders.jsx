@@ -1,25 +1,20 @@
 import { useContext, useEffect, useState } from "react";
 import { orderFromLocalStorage } from "../../loaders/ProductLoader";
 import Order from "./Order";
-import { getQuantityData, removeFromOrderDb } from "../../utilities/LocalStorage";
+import { removeFromOrderDb } from "../../utilities/LocalStorage";
 import { Link } from "react-router-dom";
 import { Toaster, toast } from "react-hot-toast";
 import { OrderSummaryContext } from "../../layouts/SideNav";
-import { ProductsContext } from "../../App";
 
 const MyOrders = () => {
     const [orderedProducts, setOrderedProducts] = useState([]);
 
-    const { products } = useContext(ProductsContext);
     const {
         removeOrder,
         setRemoveOrder,
         totalSelectedItems,
         setTotalSelectedItems,
-        setTotalPrice,
-        setTotalShippingCharge,
-        setTotalTax,
-        setGrandTotal,
+        updateOrderSummaryState,
     } = useContext(OrderSummaryContext);
 
     useEffect(() => {
@@ -35,36 +30,11 @@ const MyOrders = () => {
     const handleTrashBtn = id => {
         removeFromOrderDb(id);
 
-        // For removing single order cart and update the Order Summary data
-        // const trashedProduct = orderedProducts.find(orderedProduct => orderedProduct.id === id);
-
         // Selected Items Updated
         setTotalSelectedItems(totalSelectedItems - 1);
 
-        // Traversing through all products for updating Order Summary data
-        const savedOrders = getQuantityData();
-        let price = 0;
-        let shippingCharge = 0;
-        for (const orderId in savedOrders) {
-            const previousAddedProduct = products.find(product => product.id === orderId);
-            if (previousAddedProduct) {
-                const quantity = savedOrders[orderId];
-                previousAddedProduct.quantity = quantity;
-
-                // Calculating total price
-                price += previousAddedProduct.price * quantity;
-
-                // Calculating total shipping charge
-                shippingCharge += previousAddedProduct.shipping * quantity;
-            }
-        }
-        // Updating Tax
-        const tax = parseFloat((price * 0.05).toFixed(2));
-        // Updating all values
-        setTotalPrice(price);
-        setTotalShippingCharge(shippingCharge);
-        setTotalTax(tax);
-        setGrandTotal(price + shippingCharge + tax);
+        // Changes Order Summary data when triggered close button
+        updateOrderSummaryState();
 
         // Remaining products for showing remaining items in the UI
         const remainingProducts = orderedProducts.filter(orderedProduct => orderedProduct.id !== id);
