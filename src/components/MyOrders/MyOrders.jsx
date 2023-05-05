@@ -1,24 +1,23 @@
 import { useContext, useEffect, useState } from "react";
 import { orderFromLocalStorage } from "../../loaders/ProductLoader";
 import Order from "./Order";
-import { removeFromOrderDb } from "../../utilities/LocalStorage";
+import { getQuantityData, removeFromOrderDb } from "../../utilities/LocalStorage";
 import { Link } from "react-router-dom";
 import { Toaster, toast } from "react-hot-toast";
 import { OrderSummaryContext } from "../../layouts/SideNav";
+import { ProductsContext } from "../../App";
 
 const MyOrders = () => {
     const [orderedProducts, setOrderedProducts] = useState([]);
 
+    const { products } = useContext(ProductsContext);
     const {
         removeOrder,
         setRemoveOrder,
         totalSelectedItems,
         setTotalSelectedItems,
-        totalPrice,
         setTotalPrice,
-        totalShippingCharge,
         setTotalShippingCharge,
-        totalTax,
         setTotalTax,
         setGrandTotal,
     } = useContext(OrderSummaryContext);
@@ -31,31 +30,41 @@ const MyOrders = () => {
             setOrderedProducts([]);
             setRemoveOrder(false);
         }
-    }, [removeOrder, setRemoveOrder]);  
+    }, [removeOrder, setRemoveOrder]);
 
     const handleTrashBtn = id => {
         removeFromOrderDb(id);
 
         // For removing single order cart and update the Order Summary data
-        const trashedProduct = orderedProducts.find(orderedProduct => orderedProduct.id === id);
+        // const trashedProduct = orderedProducts.find(orderedProduct => orderedProduct.id === id);
 
         // Selected Items Updated
         setTotalSelectedItems(totalSelectedItems - 1);
 
-        // Price updated
-        const priceAfterRemovingSingleOrder = totalPrice - trashedProduct.price;
-        setTotalPrice(priceAfterRemovingSingleOrder);
+        // Traversing through all products for updating Order Summary data
+        const savedOrders = getQuantityData();
+        let price = 0;
+        let shippingCharge = 0;
+        for (const orderId in savedOrders) {
+            const previousAddedProduct = products.find(product => product.id === orderId);
+            if (previousAddedProduct) {
+                const quantity = savedOrders[orderId];
+                previousAddedProduct.quantity = quantity;
 
-        // Shipping Charge updated
-        const shippingChargeAfterRemovingSingleOrder = totalShippingCharge - trashedProduct.shipping;
-        setTotalShippingCharge(shippingChargeAfterRemovingSingleOrder);
+                // Calculating total price
+                price += previousAddedProduct.price * quantity;
 
-        // Tax updated
-        const taxAfterRemovingSingleOrder = parseFloat((totalTax - (trashedProduct.price * 0.05)).toFixed(2));
-        setTotalTax(taxAfterRemovingSingleOrder);
-
-        // Grand Total Price updated
-        setGrandTotal(priceAfterRemovingSingleOrder + shippingChargeAfterRemovingSingleOrder + taxAfterRemovingSingleOrder);
+                // Calculating total shipping charge
+                shippingCharge += previousAddedProduct.shipping * quantity;
+            }
+        }
+        // Updating Tax
+        const tax = parseFloat((price * 0.05).toFixed(2));
+        // Updating all values
+        setTotalPrice(price);
+        setTotalShippingCharge(shippingCharge);
+        setTotalTax(tax);
+        setGrandTotal(price + shippingCharge + tax);
 
         // Remaining products for showing remaining items in the UI
         const remainingProducts = orderedProducts.filter(orderedProduct => orderedProduct.id !== id);

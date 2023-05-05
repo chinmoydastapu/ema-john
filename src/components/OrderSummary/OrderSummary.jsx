@@ -1,6 +1,6 @@
 import { TrashIcon, CreditCardIcon } from '@heroicons/react/24/solid';
 import { useContext, useEffect } from 'react';
-import { deleteOrderData, getOrderData } from '../../utilities/LocalStorage';
+import { deleteOrderData, getQuantityData } from '../../utilities/LocalStorage';
 import { Toaster, toast } from 'react-hot-toast';
 import { OrderSummaryContext } from '../../layouts/SideNav';
 import { totalOrderedItemsFromLS } from '../../loaders/ProductLoader';
@@ -23,17 +23,20 @@ const OrderSummary = () => {
     } = useContext(OrderSummaryContext);
 
     useEffect(() => {
-        const savedOrders = getOrderData();
+        const savedOrders = getQuantityData();
         let price = 0;
         let shippingCharge = 0;
         for (const orderId in savedOrders) {
             const previousAddedProduct = products.find(product => product.id === orderId);
             if (previousAddedProduct) {
+                const quantity = savedOrders[orderId];
+                previousAddedProduct.quantity = quantity;
+
                 // Calculating total price
-                price += previousAddedProduct.price;
+                price += previousAddedProduct.price * previousAddedProduct.quantity;
 
                 // Calculating total shipping charge
-                shippingCharge += previousAddedProduct.shipping;
+                shippingCharge += previousAddedProduct.shipping * previousAddedProduct.quantity;
             }
         }
         // Calculating Tax

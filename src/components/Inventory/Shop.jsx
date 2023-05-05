@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import Product from "./Product";
 import { useLoaderData } from "react-router-dom";
-import { addOrderToDb, getOrderData } from "../../utilities/LocalStorage";
+import { addOrderToDb, getQuantityData } from "../../utilities/LocalStorage";
 import { Toaster, toast } from "react-hot-toast";
 import { OrderContext } from "../../App";
 import { existedProduct } from "../../loaders/ProductLoader";
@@ -30,7 +30,7 @@ const Shop = () => {
             setOrderedProduct(currentOrderedProduct);
             addOrderToDb(id);
             // Traversing through all products for calculating Order Summary data
-            const savedOrders = getOrderData();
+            const savedOrders = getQuantityData();
             let price = 0;
             let shippingCharge = 0;
             for (const orderId in savedOrders) {
@@ -40,10 +40,10 @@ const Shop = () => {
                     previousAddedProduct.quantity = quantity;
 
                     // Calculating total price
-                    price += previousAddedProduct.price + (Object.keys(currentOrderedProduct).length !== 0 ? (existedProduct(currentOrderedProduct.id) ? 0 : currentOrderedProduct.price) : 0);
+                    price += previousAddedProduct.price * previousAddedProduct.quantity + (Object.keys(currentOrderedProduct).length !== 0 ? (existedProduct(currentOrderedProduct.id) ? 0 : currentOrderedProduct.price * currentOrderedProduct.quantity) : 0);
 
                     // Calculating total shipping charge
-                    shippingCharge += previousAddedProduct.shipping + (Object.keys(currentOrderedProduct).length !== 0 ? (existedProduct(currentOrderedProduct.id) ? 0 : currentOrderedProduct.shipping) : 0);
+                    shippingCharge += previousAddedProduct.shipping * previousAddedProduct.quantity + (Object.keys(currentOrderedProduct).length !== 0 ? (existedProduct(currentOrderedProduct.id) ? 0 : currentOrderedProduct.shipping * currentOrderedProduct.quantity) : 0);
                     // console.log("execute in all clicks");
                 }
             }

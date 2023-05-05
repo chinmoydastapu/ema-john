@@ -4,6 +4,7 @@ import { MinusCircleIcon, PlusCircleIcon, XMarkIcon } from "@heroicons/react/24/
 import { useContext, useEffect, useState } from "react";
 import { ProductsContext, ThemeContext } from "../../App";
 import { getQuantityData, setQuantityToLS } from "../../utilities/LocalStorage";
+import { OrderSummaryContext } from "../../layouts/SideNav";
 
 const Order = ({ orderedProduct, handleTrashBtn }) => {
     const [initialShow, setInitialShow] = useState(false);
@@ -11,13 +12,19 @@ const Order = ({ orderedProduct, handleTrashBtn }) => {
 
     const [toggleTheme] = useContext(ThemeContext);
     const { products } = useContext(ProductsContext);
+    const {
+        setTotalPrice,
+        setTotalShippingCharge,
+        setTotalTax,
+        setGrandTotal
+    } = useContext(OrderSummaryContext);
 
     const { id, name, price, shipping, img, stock } = orderedProduct;
 
     useEffect(() => {
         const quantityObject = getQuantityData();
         const prevProduct = products.find(p => p.id === id);
-        if(prevProduct) {
+        if (prevProduct) {
             setOrderQuantity(quantityObject[id]);
         }
     }, [id, products]);
@@ -32,18 +39,20 @@ const Order = ({ orderedProduct, handleTrashBtn }) => {
             orderedProduct.quantity = stock;
         }
         setQuantityToLS(id, orderedProduct.quantity);
+        updateThePrice();
     };
 
     const handleDecreaseQuantity = () => {
         const quantity = parseInt(orderQuantity) - 1;
         if (quantity > 1) {
             setOrderQuantity(quantity);
-            orderedProduct.quantity = orderQuantity;
+            orderedProduct.quantity = quantity;
         } else {
             setOrderQuantity(1);
             orderedProduct.quantity = 1;
         }
         setQuantityToLS(id, orderedProduct.quantity);
+        updateThePrice();
     };
 
     const handleQuantityChange = event => {
@@ -56,7 +65,35 @@ const Order = ({ orderedProduct, handleTrashBtn }) => {
             orderedProduct.quantity = stock;
         }
         setQuantityToLS(id, orderedProduct.quantity);
+        updateThePrice();
     };
+
+    const updateThePrice = () => {
+        // Traversing through all products for updating Order Summary data
+        const savedOrders = getQuantityData();
+        let price = 0;
+        let shippingCharge = 0;
+        for (const orderId in savedOrders) {
+            const previousAddedProduct = products.find(product => product.id === orderId);
+            if (previousAddedProduct) {
+                const quantity = savedOrders[orderId];
+                previousAddedProduct.quantity = quantity;
+
+                // Calculating total price
+                price += previousAddedProduct.price * quantity;
+
+                // Calculating total shipping charge
+                shippingCharge += previousAddedProduct.shipping * quantity;
+            }
+        }
+        // Updating Tax
+        const tax = parseFloat((price * 0.05).toFixed(2));
+        // Updating all values
+        setTotalPrice(price);
+        setTotalShippingCharge(shippingCharge);
+        setTotalTax(tax);
+        setGrandTotal(price + shippingCharge + tax);
+    }
 
     setTimeout(() => {
         setInitialShow(true);
