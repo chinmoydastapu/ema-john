@@ -23,4 +23,5 @@ Ema-John is a React-based inventory management system built with Vite. It displa
 
 ## Deployment
 This project is deployed on Vercel. Here is the Live link provided.
-[Ema-John Live Link](ema-john-chinmoy.vercel.app)
+
+[Ema-John Live Link](https://ema-john-chinmoy.vercel.app/)
