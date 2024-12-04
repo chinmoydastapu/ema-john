@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import { RouterProvider } from "react-router-dom";
 import { productLoader } from "./loaders/ProductLoader";
-import { router } from "./routes/routes";
+import { router } from "./routes/Routes";
 
 export const ThemeContext = createContext();
 export const CartContext = createContext();
